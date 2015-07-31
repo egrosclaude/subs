@@ -1,0 +1,2 @@
+#!/bin/bash -x
+g++ subs.cpp -o subs $(pkg-config --cflags --libs opencv) -llept -ltesseract

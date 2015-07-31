@@ -1,0 +1,29 @@
+#!/bin/bash -x
+
+rm crop* 
+
+./subs > video2.srt
+
+perl -n -e '
+        BEGIN {$sub = 1}; 
+        chomp; 
+        if(/^(\d+)$/) {$sub = $1}; 
+        if(/(\S+) --> (\S+)/) { printf "%d\n%s\nSUB %d: desde %s hasta %s\n\n",$sub,$_,$sub,$1,$2};
+' < video2.srt > video3.srt
+
+read a
+
+
+#for i in $(ls cropped_*); do convert -crop 720x80+0+340 $i ${i/jpg/sub.jpg}; done
+for i in cropped_*; do convert -crop 800x90+240+590 $i ${i/jpg/sub.jpg}; done
+
+
+
+read a
+for i in cropped_*; do tesseract -l eng $i $i; done
+
+read a
+perl -i -e 'print unless /^$/' *.txt
+
+read a
+perl -n -e 'if(/SUB (\d+)/) { $f = "cropped_$1.sub.jpg.txt"; system("cat $f"); } else {print};' < video3.srt > video.srt 
